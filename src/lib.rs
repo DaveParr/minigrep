@@ -58,19 +58,22 @@ fn find_and_format<'a>(query: &str, line: &'a str) -> Option<String> {
     }
 }
 
+fn search_lines<F>(contents: &str, f: F) -> Vec<String>
+where
+    F: Fn(&str) -> Option<String>,
+{
+    contents.lines().filter_map(f).collect()
+}
+
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<String> {
-    contents
-        .lines()
-        .filter_map(|line| find_and_format(query, line))
-        .collect()
+    search_lines(contents, |line| find_and_format(query, line))
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<String> {
     let query = query.to_lowercase();
-    contents
-        .lines()
-        .filter_map(|line| find_and_format(&query, &line.to_lowercase()))
-        .collect()
+    search_lines(contents, |line| {
+        find_and_format(&query, &line.to_lowercase())
+    })
 }
 
 #[cfg(test)]
