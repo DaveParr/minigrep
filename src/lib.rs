@@ -41,29 +41,36 @@ impl Config {
     }
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line)
-        }
+fn find_and_format<'a>(query: &str, line: &'a str) -> Option<String> {
+    if let Some(start) = line.find(query) {
+        let end = start + query.len();
+        let formatted_line = format!(
+            "{}{}{}{}{}",
+            &line[..start],
+            "\x1b[1m", // Start bold
+            &line[start..end],
+            "\x1b[0m", // End bold
+            &line[end..],
+        );
+        Some(formatted_line)
+    } else {
+        None
     }
-
-    results
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<String> {
+    contents
+        .lines()
+        .filter_map(|line| find_and_format(query, line))
+        .collect()
+}
+
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<String> {
     let query = query.to_lowercase();
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line)
-        }
-    }
-
-    results
+    contents
+        .lines()
+        .filter_map(|line| find_and_format(&query, &line.to_lowercase()))
+        .collect()
 }
 
 #[cfg(test)]
@@ -79,7 +86,10 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+        assert_eq!(
+            vec!["safe, fast, pro\u{1b}[1mduct\u{1b}[0mive."],
+            search(query, contents)
+        );
     }
 
     #[test]
@@ -92,7 +102,7 @@ Pick three.
 Trust me.";
 
         assert_eq!(
-            vec!["Rust:", "Trust me."],
+            vec!["\u{1b}[1mrust\u{1b}[0m:", "t\u{1b}[1mrust\u{1b}[0m me."],
             search_case_insensitive(query, contents)
         );
     }
