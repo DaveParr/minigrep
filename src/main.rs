@@ -1,7 +1,7 @@
 use std::env;
 use std::process;
 
-use minigrep::Config;
+use daveparr_minigrep::Config;
 
 /// The main function is the entry point for the program.
 /// Rust doesn't allow for testing the main function, so we
@@ -16,7 +16,7 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    if let Err(e) = minigrep::run(config) {
+    if let Err(e) = daveparr_minigrep::run(config) {
         eprintln!("Application error: {}", e);
         process::exit(1);
     }

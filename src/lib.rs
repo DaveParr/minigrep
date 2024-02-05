@@ -1,6 +1,6 @@
-//! # minigrep
+//! # daveparr_minigrep
 //!
-//! `minigrep` is a simple command line program that searches for a string in a file.
+//! `daveparr_minigrep` is a simple command line program that searches for a string in a file.
 //! It is based on the example in ["The Rust Book"](https://doc.rust-lang.org/book/ch12-00-an-io-project.html).
 
 use std::error::Error;
@@ -67,7 +67,7 @@ impl Config {
 /// safe, fast, productive.
 /// Pick three.
 /// Duct tape.";
-/// assert_eq!(vec!["safe, fast, productive."], minigrep::search(query, contents));
+/// assert_eq!(vec!["safe, fast, productive."], daveparr_minigrep::search(query, contents));
 /// ```
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     contents
@@ -85,7 +85,7 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 /// safe, fast, productive.
 /// Pick three.
 /// Trust me.";
-/// assert_eq!(vec!["Rust:", "Trust me."], minigrep::search_case_insensitive(query, contents));
+/// assert_eq!(vec!["Rust:", "Trust me."], daveparr_minigrep::search_case_insensitive(query, contents));
 /// ```
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     let query = query.to_lowercase();
